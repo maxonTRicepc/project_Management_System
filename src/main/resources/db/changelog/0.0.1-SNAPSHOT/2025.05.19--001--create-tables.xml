@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="2025.05.18--001--create-tables" author="maxonTRicepc">
+        <!-- Создание таблиц -->
+        <createTable tableName="roles">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="statuses">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="priorities">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+        </createTable>
+
+        <!-- Пользователи -->
+        <createTable tableName="users">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="login" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="password" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="VARCHAR(100)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="role_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_user_role"
+                             referencedTableName="roles" referencedColumnNames="id"/>
+            </column>
+        </createTable>
+
+        <!-- Проекты -->
+        <createTable tableName="projects">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT"/>
+        </createTable>
+
+        <!-- Задачи -->
+        <createTable tableName="tasks">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT"/>
+            <column name="status_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_task_status"
+                             referencedTableName="statuses" referencedColumnNames="id"/>
+            </column>
+            <column name="priority_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_task_priority"
+                             referencedTableName="priorities" referencedColumnNames="id"/>
+            </column>
+            <column name="project_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_task_project"
+                             referencedTableName="projects" referencedColumnNames="id"/>
+            </column>
+        </createTable>
+
+        <!-- Связь задач и пользователей (ManyToMany) -->
+        <createTable tableName="task_user">
+            <column name="task_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_task_user_task"
+                             referencedTableName="tasks" referencedColumnNames="id"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_task_user_user"
+                             referencedTableName="users" referencedColumnNames="id"/>
+            </column>
+        </createTable>
+
+        <!-- История изменений -->
+        <createTable tableName="histories">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="task_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_history_task"
+                             referencedTableName="tasks" referencedColumnNames="id"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_history_user"
+                             referencedTableName="users" referencedColumnNames="id"/>
+            </column>
+            <column name="change_date" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="change_description" type="TEXT"/>
+        </createTable>
+
+        <!-- Индексы для часто используемых полей -->
+        <createIndex tableName="users" indexName="idx_users_login">
+            <column name="login"/>
+        </createIndex>
+
+        <createIndex tableName="tasks" indexName="idx_tasks_project">
+            <column name="project_id"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

@@ -1,0 +1,30 @@
+services:
+  management-system:
+    image: management-system:1.0-SNAPSHOT
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: management-system-container
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres-database
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-database:5432/management-system-db
+
+  postgres-database:
+    image: postgres:latest
+    container_name: postgres-database
+    environment:
+      POSTGRES_DB: management-system-db
+      POSTGRES_USER: management-system-user
+      POSTGRES_PASSWORD: gfg
+    volumes:
+      - postgres-data-volume:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+volumes:
+  postgres-data-volume:
