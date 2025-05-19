@@ -1,4 +1,9 @@
 package com.example.project_Management_System.Repository;
 
-public class RoleRepository {
+import com.example.project_Management_System.model.Role;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface RoleRepository extends JpaRepository<Role, Long> {
 }
